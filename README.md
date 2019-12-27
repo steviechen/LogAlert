@@ -28,7 +28,6 @@
 - **Text Encoding/Embedding** is a upstream task required in many NLP applications, e.g. similarity queries, sentiment analysis, text classification. The goal is to represent a variable length sentence into a fixed length vector, e.g. `cisco webex` to `[0.1, 0.3, 0.9]`. Each element of the vector should "encode" some semantics of the original text.
 
 - **Auto Labelling/Tagging** is defined by most similar case which recorded as target tracking_id within the threshold as hyper-parameter.
-<p align="center"><img src="./docs/similarity.gif?raw=true"/></p>
 
 - **Unknown Tracking_id Understanding** apples unsupervised algorithms to detect the potential topics and keywords to assist human being going through the unknown cases as soon as possible.
 
