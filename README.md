@@ -1,4 +1,4 @@
-<h1 align="center">LogAlert - Anomaly Detection Service by Text Mining</h1>
+<h1 align="center">LogAlert - Real-Time Anomaly Detection Service by Text Mining</h1>
 
 <p align="center">Using Text Mining models as auto identification service to realtime tracking_ids' exceptions.</p>
 
@@ -9,8 +9,6 @@
   <a href="#server-and-client-api">API</a>
   
 </p>
-
-<h6 align="center">Made by Rui Chen</h6>
 
 <h3>Highlights</h3>
 
@@ -52,26 +50,24 @@ rawdata
 #### 2. Obtain Models
 Two ways to initiate the models:
 - Directly train models by given corpora which provided as formatted csv on folder `./data/rawdata/`, folder contains something like: 
-```bash
-mcrsvr_sj_1030.csv                                     277K
-```
+
 then call the request [Train Model](#train-model)
 
 - Copy pretrained models to folder `./data/output/model/`, folder contains something like: 
 ```bash
-d2v_dbow_meeting&mcrsvr.model                          52M
-d2v_dbow_meeting&mngsvr.model                          60M
-w2v_meeting&mcrsvr.model                               14M
-w2v_meeting&mngsvr.model                               23M
+d2v_dbow_.model                         
+d2v_dbow_.model                          
+w2v_.model                               
+w2v_.model                               
 ```
 then call the request [Load Model](#load-model)
 
 #### 3. Insert target tracking_id as known cases
 Origin text of target tracking_ids has been saved on `./data/input/`, folder contains something like: 
 ```bash
-resFilter_meeting&mcrsvr&1030.csv                      945M
-resFilter_target_meeting&mcrsvr.csv                    15K
-resFilter_target_meeting&mngsvr.csv                    43K
+resFilter_                     
+resFilter_target_                    
+resFilter_target_                    
 ```
 names contained *target* indicate that this file has content of target tracking_id.
 There are three methods to maintain the target tracking_id by call request [Load Targets](#load-target).
