@@ -66,7 +66,7 @@ pytest==4.3.1
 python-dateutil==2.7.5
 pytz==2018.7
 PyWavelets==1.0.2
-PyYAML==3.13
+PyYAML==5.1
 pyzmq==18.0.0
 redis==3.2.1
 requests==2.22.0
