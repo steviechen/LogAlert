@@ -1,4 +1,4 @@
-class LogExClusterReturn(object):
+class LogAlertClusterReturn(object):
     def __init__(self,feedback):
         self.feedback:list[SingleResult] = feedback
 

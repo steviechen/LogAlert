@@ -3,19 +3,19 @@
 import pandas as pd
 from src.main.service.TrainingService import TrainingService
 from src.main.utils.TimeUtil import Timeutil
-from src.main.utils.LogExTrainUtil import LogExTrainUtil
-from src.main.domain.vo.LogExTrackingId import LogExTrackingId,Desc
-from src.main.utils.LogExProcessUtil import LogExProcessUtil
-from src.main.domain.vo.LogExClusterReturn import LogExClusterReturn,SingleResult,Topic
+from src.main.utils.LogAlertTrainUtil import LogAlertTrainUtil
+from src.main.domain.vo.LogAlertTrackingId import LogAlertTrackingId,Desc
+from src.main.utils.LogAlertProcessUtil import LogAlertProcessUtil
+from src.main.domain.vo.LogAlertClusterReturn import LogAlertClusterReturn,SingleResult,Topic
 from gensim import corpora, models
 from src.main import myGlobal
 
-class LogExPredictFeedbackService(TrainingService):
+class LogAlertPredictFeedbackService(TrainingService):
     def __init__(self):
         super().__init__()
         self.timeUtil = Timeutil()
-        self.rootPath = myGlobal.getConfigByName('LogEx_rootPath')
-        self.unknownDataDir = self.rootPath+'/Logex/input'
+        self.rootPath = myGlobal.getConfigByName('LogAlert_rootPath')
+        self.unknownDataDir = self.rootPath+'/LogAlert/input'
 
     def make_procedure(self,trackingIds,clusterNum,topN):
         rawData = pd.DataFrame(columns=['name', 'component', 'servertype', 'dc'])
@@ -24,18 +24,18 @@ class LogExPredictFeedbackService(TrainingService):
 
         feedback = []
         for name,group in rawData.groupby(['component','servertype']):
-            logExProcessUtil = LogExProcessUtil(name[0] + '&' + name[1])
-            trainTag = str('unknown_' + name[0] + '&' + name[1] + '&' + logExProcessUtil.getHostName())
-            logExTrainUtil = LogExTrainUtil(self.rootPath, trainTag)
+            LogAlertProcessUtil = LogAlertProcessUtil(name[0] + '&' + name[1])
+            trainTag = str('unknown_' + name[0] + '&' + name[1] + '&' + LogAlertProcessUtil.getHostName())
+            LogAlertTrainUtil = LogAlertTrainUtil(self.rootPath, trainTag)
             singleTypeTrackingIds = []
             for index, row in group.iterrows():
-                singleTypeTrackingIds.append(LogExTrackingId(row['name'],'', Desc(row['component'], row['servertype'], row['dc'])))
-            logExTrainUtil.genFilterFileBytrackingIdsByMutiproc(singleTypeTrackingIds)
+                singleTypeTrackingIds.append(LogAlertTrackingId(row['name'],'', Desc(row['component'], row['servertype'], row['dc'])))
+            LogAlertTrainUtil.genFilterFileBytrackingIdsByMutiproc(singleTypeTrackingIds)
             unknownLogs = []
             for singleLog in pd.read_csv(self.unknownDataDir + '/resFilter_%s.csv'%(trainTag))['log'].values.tolist():
-                unknownLogs.append(logExProcessUtil.findKeywords(logExProcessUtil.splitWordSentenceForKeyWords(singleLog,'List')))
+                unknownLogs.append(LogAlertProcessUtil.findKeywords(LogAlertProcessUtil.splitWordSentenceForKeyWords(singleLog,'List')))
             feedback.append(SingleResult(name[0],name[1],self.genClusterRes(unknownLogs,clusterNum,topN)).__dict__)
-        return LogExClusterReturn(feedback).__dict__
+        return LogAlertClusterReturn(feedback).__dict__
 
     def genClusterRes(self,texts,clusterNum,topN):
         dictionary = corpora.Dictionary(texts)

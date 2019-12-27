@@ -2,19 +2,19 @@ import numpy as np
 import pandas as pd
 from collections import defaultdict
 from src.main.domain.vo.DocList import DocList
-from src.main.utils.LogExProcessUtil import LogExProcessUtil
-from src.main.utils.LogExTrainUtil import LogExTrainUtil
+from src.main.utils.LogAlertProcessUtil import LogAlertProcessUtil
+from src.main.utils.LogAlertTrainUtil import LogAlertTrainUtil
 
-class LogExPredictUtil(object):
+class LogAlertPredictUtil(object):
     def __init__(self,rootPath,predictTag):
         self.rootPath = rootPath
         self.predictTag = predictTag
-        self.logExProcessUtil = LogExProcessUtil(predictTag)
-        self.logExTrainUtil = LogExTrainUtil(rootPath,predictTag)
+        self.LogAlertProcessUtil = LogAlertProcessUtil(predictTag)
+        self.LogAlertTrainUtil = LogAlertTrainUtil(rootPath,predictTag)
 
     def genPredSplited(self,trackingIds,reqinterval='7d',rawDataTag = 'default'):
-        self.logExTrainUtil.genFilterFileBytrackingIdsByMutiproc(trackingIds,reqinterval,rawDataTag=rawDataTag)
-        return self.logExTrainUtil.genSplitedData()
+        self.LogAlertTrainUtil.genFilterFileBytrackingIdsByMutiproc(trackingIds,reqinterval,rawDataTag=rawDataTag)
+        return self.LogAlertTrainUtil.genSplitedData()
 
     def getD2VDF(self,predD2VDocPath,d2vModel,predSplited):
         docListPred = DocList(predD2VDocPath)
@@ -54,8 +54,8 @@ class LogExPredictUtil(object):
         return w2vFeatDF,w2vFeatAvgDF,w2vModel
 
     def genPredDF(self,predSplited,d2vModel,w2vModel):
-        self.logExTrainUtil.genTrainDataForD2V(predSplited)
-        predD2VDocPath = self.rootPath + '/Logex/output/corpus/d2v_%s.txt'%(self.predictTag)
+        self.LogAlertTrainUtil.genTrainDataForD2V(predSplited)
+        predD2VDocPath = self.rootPath + '/LogAlert/output/corpus/d2v_%s.txt'%(self.predictTag)
         d2vDF,d2vModel = self.getD2VDF(predD2VDocPath,d2vModel,predSplited)
         w2vFeatDF,w2vFeatAvgDF,w2vModel = self.getW2VDF(predSplited,w2vModel)
         predDF = pd.concat([d2vDF, w2vFeatDF, w2vFeatAvgDF], axis=1)
@@ -63,7 +63,7 @@ class LogExPredictUtil(object):
         return predDF,d2vModel,w2vModel
 
     def genTargetDF(self,targetSplited,targetTag,d2vModel,w2vModel):
-        targetD2vDocPath = self.rootPath+'/Logex/output/corpus/d2v_target_%s.txt'%(targetTag)
+        targetD2vDocPath = self.rootPath+'/LogAlert/output/corpus/d2v_target_%s.txt'%(targetTag)
         d2vDF,d2vModel = self.getD2VDF(targetD2vDocPath,d2vModel,targetSplited)
         w2vFeatDF,w2vFeatAvgDF,w2vModel = self.getW2VDF(targetSplited,w2vModel)
         targetDF = pd.concat([d2vDF, w2vFeatDF, w2vFeatAvgDF], axis=1)
@@ -71,7 +71,7 @@ class LogExPredictUtil(object):
         return targetDF,d2vModel,w2vModel
 
     def genRawData(self,rawCSVPath='defalutPath'):
-        if(rawCSVPath == 'defalutPath'):rawCSVPath = self.rootPath+'/Logex/input/resFilter_%s.csv'%self.trainTag
+        if(rawCSVPath == 'defalutPath'):rawCSVPath = self.rootPath+'/LogAlert/input/resFilter_%s.csv'%self.trainTag
         rawData = pd.read_csv(rawCSVPath)
         return rawData
 

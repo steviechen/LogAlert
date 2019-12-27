@@ -3,14 +3,14 @@
 import pickle
 from src.main.utils.RedisUtil import RedisUtil
 from src.main.service.TrainingService import TrainingService
-from src.main.domain.vo.LogExConfig import LogExConfig
+from src.main.domain.vo.LogAlertConfig import LogAlertConfig
 from src.main import myGlobal
 from src.main.utils import ConfigurationUtil
 
-class LogExQueryConfigService(TrainingService):
+class LogAlertQueryConfigService(TrainingService):
     def __init__(self):
         super().__init__()
-        self.deployModel = ConfigurationUtil.get('LogEx', 'deployMode')
+        self.deployModel = ConfigurationUtil.get('LogAlert', 'deployMode')
 
     def make_procedure(self):
         config = {}
@@ -20,7 +20,7 @@ class LogExQueryConfigService(TrainingService):
         else:
             for key in self.getAllConfigNamesInRedis():
                 config[key] = pickle.loads(RedisUtil().get_single_data(key))
-        return LogExConfig(config).__dict__
+        return LogAlertConfig(config).__dict__
 
 
     def getAllConfigNamesInRedis(self):

@@ -7,7 +7,7 @@ import socket
 import gc
 from src.main import myGlobal
 
-class LogExProcessUtil(object):
+class LogAlertProcessUtil(object):
     def __init__(self,processTag='default'):
         self.processTag = processTag
         self.stopFile = os.getcwd()+'/conf/stop.txt'
@@ -153,7 +153,7 @@ class LogExProcessUtil(object):
 
     def findUniqueKeywords(self,li):
         rs = pd.Series(np.unique(self.findKeywords(li))).apply(lambda x: x.strip()).tolist()
-        l1 = sorted([word for word in rs if len(word.split(' ')) > int(myGlobal.getConfigByName('LogEx_leastSpaceNumInKeyWord',self.processTag)) and len(word) > int(myGlobal.getConfigByName('LogEx_leastKeyWordLength',self.processTag))],key=lambda word:len(str(word).split(' ')),reverse=True)
+        l1 = sorted([word for word in rs if len(word.split(' ')) > int(myGlobal.getConfigByName('LogAlert_leastSpaceNumInKeyWord',self.processTag)) and len(word) > int(myGlobal.getConfigByName('LogAlert_leastKeyWordLength',self.processTag))],key=lambda word:len(str(word).split(' ')),reverse=True)
         return sorted(set(l1),key=l1.index)
     ###### 分词-keyWords ######
 
@@ -173,7 +173,7 @@ class LogExProcessUtil(object):
             minDist = min(allLDist)
             if minDist < 0.5 * max(len(split1), len(split2)):
                 num = num + 1
-        return -scipy.log(num / (len(seq1) + len(seq2))) * float(myGlobal.getConfigByName('LogEx_levenshteinWeight',self.processTag))
+        return -scipy.log(num / (len(seq1) + len(seq2))) * float(myGlobal.getConfigByName('LogAlert_levenshteinWeight',self.processTag))
 
     def levenshtein(self,seq1, seq2):
         size_x = len(seq1) + 1

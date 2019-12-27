@@ -1,4 +1,4 @@
-class LogExTrackingId(object):
+class LogAlertTrackingId(object):
     def __init__(self,name,tag,desc):
         self.name = name
         self.tag = tag

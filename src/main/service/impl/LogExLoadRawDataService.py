@@ -7,14 +7,14 @@ from src.main.service.TrainingService import TrainingService
 from src.main.utils.TimeUtil import Timeutil
 from src.main import myGlobal
 
-class LogExLoadRawDataService(TrainingService):
+class LogAlertLoadRawDataService(TrainingService):
     def __init__(self):
         super().__init__()
         self.timeUtil = Timeutil()
-        self.rootPath = myGlobal.getConfigByName('LogEx_rootPath')
+        self.rootPath = myGlobal.getConfigByName('LogAlert_rootPath')
 
     def make_procedure(self,trackingIds):
-        rawDataDirPath = self.rootPath+'/Logex/rawdata/'+ str(datetime.date.today())
+        rawDataDirPath = self.rootPath+'/LogAlert/rawdata/'+ str(datetime.date.today())
         rawData = pd.DataFrame(columns=['name','component','servertype','dc'])
 
         if not os.path.exists(rawDataDirPath): os.mkdir(rawDataDirPath)

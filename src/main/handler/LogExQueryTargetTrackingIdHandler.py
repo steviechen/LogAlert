@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from flask import request
-from src.main.service.impl.LogExQueryTargetTrackingIdService import LogExQueryTargetTrackingIdService
+from src.main.service.impl.LogAlertQueryTargetTrackingIdService import LogAlertQueryTargetTrackingIdService
 
-class LogExQueryTargetTrackingIdHandler():
+class LogAlertQueryTargetTrackingIdHandler():
     def __init__(self):
         super().__init__()
-        self.logExQueryTargetTrackingIdService = LogExQueryTargetTrackingIdService()
+        self.LogAlertQueryTargetTrackingIdService = LogAlertQueryTargetTrackingIdService()
 
     def get(self):
         component = request.args.get('component',type=str,default='all')
         serverType = request.args.get('serverType',type=str,default='all')
-        return self.logExQueryTargetTrackingIdService.make_procedure(component,serverType)
+        return self.LogAlertQueryTargetTrackingIdService.make_procedure(component,serverType)

@@ -1,4 +1,4 @@
-class LogExModel(object):
+class LogAlertModel(object):
     def __init__(self,component,servertype,path,type):
         self.component = component
         self.servertype = servertype

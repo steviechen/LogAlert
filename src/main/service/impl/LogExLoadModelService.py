@@ -9,11 +9,11 @@ from gensim.models import Doc2Vec
 from src.main import myGlobal
 from src.main.utils import ConfigurationUtil
 
-class LogExLoadModelService(TrainingService):
+class LogAlertLoadModelService(TrainingService):
     def __init__(self):
         super().__init__()
-        self.defaultModelDir = myGlobal.getConfigByName('LogEx_rootPath')+'/Logex/output/model'
-        self.deployModel = str(ConfigurationUtil.get('LogEx','deployMode'))
+        self.defaultModelDir = myGlobal.getConfigByName('LogAlert_rootPath')+'/LogAlert/output/model'
+        self.deployModel = str(ConfigurationUtil.get('LogAlert','deployMode'))
 
     def make_procedure(self,models):
         if(models==[]):

@@ -1,4 +1,4 @@
-class LogExReturn(object):
+class LogAlertReturn(object):
     def __init__(self,matchRes,similarRes,predictDetail,targetDetails):
         self.matchRes = matchRes
         self.similarRes:list[SingleSimilarRes] = similarRes

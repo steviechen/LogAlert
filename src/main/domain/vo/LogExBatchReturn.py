@@ -1,5 +1,5 @@
-from .LogExTrackingId import Desc
-class LogExBatchReturn(object):
+from .LogAlertTrackingId import Desc
+class LogAlertBatchReturn(object):
     def __init__(self,name,tag,desc,keyWords,distance):
         self.name = name
         self.tag = tag

@@ -1,4 +1,4 @@
-<h1 align="center">Logex - Anomaly Detection Service by Text Mining</h1>
+<h1 align="center">LogAlert - Anomaly Detection Service by Text Mining</h1>
 
 <p align="center">Using Text Mining models as auto identification service to realtime tracking_ids' exceptions.</p>
 
@@ -10,7 +10,7 @@
   
 </p>
 
-<h6 align="center">Made by Stevie Chen; Luke Lu; Jeven Zhou; Alexander Yang</h6>
+<h6 align="center">Made by Rui Chen</h6>
 
 <h3>Highlights</h3>
 
@@ -33,16 +33,16 @@
 
 - **Unknown Tracking_id Understanding** apples unsupervised algorithms to detect the potential topics and keywords to assist human being going through the unknown cases as soon as possible.
 
-- **Finally, `logex`** uses *D2V/W2V* as a tracking_id logs encoder, uses *cosine/levenshtein distance* to calculate the similarities between target tracking_ids and realtime tracking_id, and hosts it as a service via Flask, allowing you to labelling the tracking_id and understanding/defining the unknown ones. 
+- **Finally, `LogAlert`** uses *D2V/W2V* as a tracking_id logs encoder, uses *cosine/levenshtein distance* to calculate the similarities between target tracking_ids and realtime tracking_id, and hosts it as a service via Flask, allowing you to labelling the tracking_id and understanding/defining the unknown ones. 
 
 <h3>Install and Config</h3>
 
 Service can be installed separately or even on *different* machines:
 #### 1. Deploy code and data
-Download code and data archives, then uncompress the zip file into project folder, say `/apps/Logex-service/`
+Download code and data archives, then uncompress the zip file into project folder, say `/apps/LogAlert-service/`
 ```bash
-LogEx-master
-LogEx-data
+LogAlert-master
+LogAlert-data
 ```
 in data folder, you may see
 ```bash
@@ -94,4 +94,4 @@ levenshteinWeight = 0.05
 Note that the server MUST be running on **Python >= 3.6** . Again, the server does not support Python 2!
 
 <h3>Restful API</h3>
-More details please go to page [LogExRestful](./LogExRestful.md)
+More details please go to page [LogAlertRestful](./LogAlertRestful.md)

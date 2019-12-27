@@ -7,32 +7,32 @@ import json
 import numpy as np
 import pandas as pd
 from src.main.service.TrainingService import TrainingService
-from src.main.utils.LogExProcessUtil import LogExProcessUtil
-from src.main.utils.LogExPredictUtil import LogExPredictUtil
+from src.main.utils.LogAlertProcessUtil import LogAlertProcessUtil
+from src.main.utils.LogAlertPredictUtil import LogAlertPredictUtil
 from src.main.utils.RedisUtil import RedisUtil
-from src.main.utils.LogExTrainUtil import LogExTrainUtil
+from src.main.utils.LogAlertTrainUtil import LogAlertTrainUtil
 from sklearn.metrics.pairwise import cosine_distances
-from src.main.domain.vo.LogExReturn import LogExReturn,PredictDetail,TargetDetail,SingleSimilarRes
-from src.main.domain.vo.LogExFeedBack import Feedback,SingleResult
+from src.main.domain.vo.LogAlertReturn import LogAlertReturn,PredictDetail,TargetDetail,SingleSimilarRes
+from src.main.domain.vo.LogAlertFeedBack import Feedback,SingleResult
 from src.main.domain.vo.Message import Message
 from src.main.utils.HttpUtil import HttpUtil
 from src.main import myGlobal
 from distutils.util import strtobool
 from src.main.utils import ConfigurationUtil
 
-class LogExPredictSingleService(TrainingService):
+class LogAlertPredictSingleService(TrainingService):
     def __init__(self):
         super().__init__()
-        self.deployModel = str(ConfigurationUtil.get('LogEx','deployMode'))
-        self.rootPath = myGlobal.getConfigByName('LogEx_rootPath')
+        self.deployModel = str(ConfigurationUtil.get('LogAlert','deployMode'))
+        self.rootPath = myGlobal.getConfigByName('LogAlert_rootPath')
         self.feedbackUrl = myGlobal.getConfigByName('FeedBack_url')
         self.sendOrNotSend = strtobool(myGlobal.getConfigByName('FeedBack_sendOrNotSend'))
         self.saveUnKnown = strtobool(myGlobal.getConfigByName('FeedBack_saveUnKnown'))
 
     def make_procedure(self,trackingId):
         predictTag = trackingId.desc.component+'&'+trackingId.desc.servertype
-        unknownDist = float(myGlobal.getConfigByName('LogEx_unknownDist',predictTag))
-        logExProcessUtil = LogExProcessUtil(predictTag)
+        unknownDist = float(myGlobal.getConfigByName('LogAlert_unknownDist',predictTag))
+        LogAlertProcessUtil = LogAlertProcessUtil(predictTag)
         if (self.deployModel == 'local'):
             if not str('d2v_dbow_'+predictTag) in myGlobal.d2vModel.keys():
                 return Message("can not find the d2vModel for %s!"%(predictTag)).__dict__
@@ -64,11 +64,11 @@ class LogExPredictSingleService(TrainingService):
             else:
                 targetSplited = pickle.loads(RedisUtil().get_single_data(predictTag))
 
-        logExPredictutil = LogExPredictUtil(self.rootPath, 'SinglePredict&'+logExProcessUtil.getHostName())
-        predSplited = logExPredictutil.genPredSplited([trackingId])
+        LogAlertPredictutil = LogAlertPredictUtil(self.rootPath, 'SinglePredict&'+LogAlertProcessUtil.getHostName())
+        predSplited = LogAlertPredictutil.genPredSplited([trackingId])
         if not predSplited.tolist() : return Message("can not find the log info for %s in ES"% trackingId.name).__dict__
-        targetDF,d2vModel,w2vModel = logExPredictutil.genTargetDF(targetSplited,predictTag,d2vModel,w2vModel)
-        predDF,d2vModel,w2vModel = logExPredictutil.genPredDF(predSplited,d2vModel,w2vModel)
+        targetDF,d2vModel,w2vModel = LogAlertPredictutil.genTargetDF(targetSplited,predictTag,d2vModel,w2vModel)
+        predDF,d2vModel,w2vModel = LogAlertPredictutil.genPredDF(predSplited,d2vModel,w2vModel)
 
         if (self.deployModel == 'local'):
             myGlobal.d2vModel['d2v_dbow_' + predictTag] = d2vModel
@@ -81,7 +81,7 @@ class LogExPredictSingleService(TrainingService):
         for i in range(0, targetDF.shape[0]):
             dist.append([i, cosine_distances(np.array([predDF.iloc[0], targetDF.iloc[i]]))[0][1]])
         result_temp = pd.DataFrame(dist, columns=["index", "distance"]).sort_values("distance")
-        rawData = LogExTrainUtil(self.rootPath,'target_'+predictTag).genRawData()
+        rawData = LogAlertTrainUtil(self.rootPath,'target_'+predictTag).genRawData()
         result = pd.merge(rawData.reset_index(), result_temp).drop(columns=['log','Unnamed: 0','level_0']).sort_index(by=['distance'],ascending=True)
         trackingId_CosDist = {}
         similarRes = []
@@ -91,9 +91,9 @@ class LogExPredictSingleService(TrainingService):
             trackingId_CosDist[row['id']] = float(row['distance'])
             i=i+1
 
-        predictLog = pd.read_csv(self.rootPath+'/Logex/input/resFilter_SinglePredict&'+logExProcessUtil.getHostName()+'.csv')
-        targetLog = pd.read_csv(self.rootPath+'/Logex/input/resFilter_%s.csv'%('target_'+predictTag))
-        keyWordsColForPredict = logExProcessUtil.findUniqueKeywords(logExProcessUtil.splitWordSentenceForKeyWords(logExProcessUtil.conc_list(predictLog['log'].values.tolist()),'List'))
+        predictLog = pd.read_csv(self.rootPath+'/LogAlert/input/resFilter_SinglePredict&'+LogAlertProcessUtil.getHostName()+'.csv')
+        targetLog = pd.read_csv(self.rootPath+'/LogAlert/input/resFilter_%s.csv'%('target_'+predictTag))
+        keyWordsColForPredict = LogAlertProcessUtil.findUniqueKeywords(LogAlertProcessUtil.splitWordSentenceForKeyWords(LogAlertProcessUtil.conc_list(predictLog['log'].values.tolist()),'List'))
 
         trackingId_levenDist = {}
         targetDetails = []
@@ -102,9 +102,9 @@ class LogExPredictSingleService(TrainingService):
             for index,row in targetLog.iterrows():
                 if(row['id']==targetTrackingId):
                     logs.append(row['log'])
-            keyWords = logExProcessUtil.findUniqueKeywords(logExProcessUtil.splitWordSentenceForKeyWords(logExProcessUtil.conc_list(logs),'List'))
+            keyWords = LogAlertProcessUtil.findUniqueKeywords(LogAlertProcessUtil.splitWordSentenceForKeyWords(LogAlertProcessUtil.conc_list(logs),'List'))
             targetDetails.append(TargetDetail(targetTrackingId,logs,keyWords).__dict__)
-            trackingId_levenDist[targetTrackingId] = logExProcessUtil.simlarityCal(keyWords,keyWordsColForPredict)
+            trackingId_levenDist[targetTrackingId] = LogAlertProcessUtil.simlarityCal(keyWords,keyWordsColForPredict)
 
         trackingId_dist_df = pd.DataFrame(columns=['trackingId', 'dist'])
         for (k, v) in trackingId_CosDist.items():
@@ -139,14 +139,14 @@ class LogExPredictSingleService(TrainingService):
 
         if predictLabel == 'Unknown':
             if(self.saveUnKnown):self.saveUnKnownTrackingId(trackingId,pd.DataFrame(predictLog,columns=['id','log']))
-            return LogExReturn('No trackingId retrieved',similarResAdjust,PredictDetail(trackingId.name,predictLog['log'].tolist(),keyWordsColForPredict).__dict__,targetDetailsAdjust).__dict__
+            return LogAlertReturn('No trackingId retrieved',similarResAdjust,PredictDetail(trackingId.name,predictLog['log'].tolist(),keyWordsColForPredict).__dict__,targetDetailsAdjust).__dict__
         else:
-            return LogExReturn('trackingId retrieved',similarResAdjust,PredictDetail(trackingId.name,predictLog['log'].tolist(),keyWordsColForPredict).__dict__,targetDetailsAdjust).__dict__
+            return LogAlertReturn('trackingId retrieved',similarResAdjust,PredictDetail(trackingId.name,predictLog['log'].tolist(),keyWordsColForPredict).__dict__,targetDetailsAdjust).__dict__
 
 
     def saveUnKnownTrackingId(self,trackingId,unknownDF):
         rootPath = self.rootPath
-        rawDataDirPath = rootPath + '/Logex/input/' + str(datetime.date.today())
+        rawDataDirPath = rootPath + '/LogAlert/input/' + str(datetime.date.today())
         if not os.path.exists(rawDataDirPath): os.mkdir(rawDataDirPath)
         rawDataFilePath = rawDataDirPath + '/unkonwn_%s.csv' % (trackingId.desc.component + '&' + trackingId.desc.servertype)
         if not os.path.exists(rawDataFilePath):

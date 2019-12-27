@@ -3,17 +3,17 @@
 from flask import Flask,jsonify
 from distutils.util import strtobool
 from src.main.utils import ConfigurationUtil
-from src.main.handler.LogExTrainHandler import LogExTrainHandler
-from src.main.handler.LogExSaveModelHandler import LogExSaveModelHandler
-from src.main.handler.LogExLoadModelHandler import LogExLoadModelHandler
-from src.main.handler.LogExLoadTargetTrackingIdsHandler import LogExLoadTargetTrackingIdsHandler
-from src.main.handler.LogExLoadRawDataHandler import LogExLoadRawDataHandler
-from src.main.handler.LogExPredictBySingleHandler import LogExPredictBySingleHandler
-from src.main.handler.LogExPredictByBatchHandler import LogExPredictByBatchHandler
-from src.main.handler.LogExPredictFeedbackHandler import LogExPredictFeedbackHandler
-from src.main.handler.LogExLoadConfigHandler import LogExLoadConfigHandler
-from src.main.handler.LogExQueryConfigHandler import LogExQueryConfigHandler
-from src.main.handler.LogExQueryTargetTrackingIdHandler import LogExQueryTargetTrackingIdHandler
+from src.main.handler.LogAlertTrainHandler import LogAlertTrainHandler
+from src.main.handler.LogAlertSaveModelHandler import LogAlertSaveModelHandler
+from src.main.handler.LogAlertLoadModelHandler import LogAlertLoadModelHandler
+from src.main.handler.LogAlertLoadTargetTrackingIdsHandler import LogAlertLoadTargetTrackingIdsHandler
+from src.main.handler.LogAlertLoadRawDataHandler import LogAlertLoadRawDataHandler
+from src.main.handler.LogAlertPredictBySingleHandler import LogAlertPredictBySingleHandler
+from src.main.handler.LogAlertPredictByBatchHandler import LogAlertPredictByBatchHandler
+from src.main.handler.LogAlertPredictFeedbackHandler import LogAlertPredictFeedbackHandler
+from src.main.handler.LogAlertLoadConfigHandler import LogAlertLoadConfigHandler
+from src.main.handler.LogAlertQueryConfigHandler import LogAlertQueryConfigHandler
+from src.main.handler.LogAlertQueryTargetTrackingIdHandler import LogAlertQueryTargetTrackingIdHandler
 
 settings = {
     'host': str(ConfigurationUtil.get("System", "host")),
@@ -23,38 +23,38 @@ settings = {
 
 app = Flask(__name__)
 
-@app.route('/load/Logex/config', methods=['POST'])
-def loadConfig(): return jsonify(LogExLoadConfigHandler().post())
+@app.route('/load/LogAlert/config', methods=['POST'])
+def loadConfig(): return jsonify(LogAlertLoadConfigHandler().post())
 
-@app.route('/load/Logex/model', methods=['POST','GET'])
-def loadModel(): return jsonify(LogExLoadModelHandler().postOrGet())
+@app.route('/load/LogAlert/model', methods=['POST','GET'])
+def loadModel(): return jsonify(LogAlertLoadModelHandler().postOrGet())
 
-@app.route('/load/Logex/targetTrackingIds', methods=['POST','GET'])
-def loadTargetTrackingIds(): return jsonify(LogExLoadTargetTrackingIdsHandler().postOrGet())
+@app.route('/load/LogAlert/targetTrackingIds', methods=['POST','GET'])
+def loadTargetTrackingIds(): return jsonify(LogAlertLoadTargetTrackingIdsHandler().postOrGet())
 
-@app.route('/load/Logex/rawData', methods=['POST'])
-def loadRawData(): return jsonify(LogExLoadRawDataHandler().post())
+@app.route('/load/LogAlert/rawData', methods=['POST'])
+def loadRawData(): return jsonify(LogAlertLoadRawDataHandler().post())
 
-@app.route('/predict/LogexByBatch', methods=['POST'])
-def predictBatch(): return jsonify(LogExPredictByBatchHandler().post())
+@app.route('/predict/LogAlertByBatch', methods=['POST'])
+def predictBatch(): return jsonify(LogAlertPredictByBatchHandler().post())
 
-@app.route('/predict/Logex', methods=['POST'])
-def predictSingle(): return jsonify(LogExPredictBySingleHandler().post())
+@app.route('/predict/LogAlert', methods=['POST'])
+def predictSingle(): return jsonify(LogAlertPredictBySingleHandler().post())
 
-@app.route('/predict/LogexFeedback', methods=['POST'])
-def predictFeedback(): return jsonify(LogExPredictFeedbackHandler().post())
+@app.route('/predict/LogAlertFeedback', methods=['POST'])
+def predictFeedback(): return jsonify(LogAlertPredictFeedbackHandler().post())
 
-@app.route('/query/Logex/config', methods=['GET'])
-def queryConfig(): return jsonify(LogExQueryConfigHandler().get())
+@app.route('/query/LogAlert/config', methods=['GET'])
+def queryConfig(): return jsonify(LogAlertQueryConfigHandler().get())
 
-@app.route('/query/Logex/targetTrackingId', methods=['GET'])
-def queryTargetTrackingIds(): return jsonify(LogExQueryTargetTrackingIdHandler().get())
+@app.route('/query/LogAlert/targetTrackingId', methods=['GET'])
+def queryTargetTrackingIds(): return jsonify(LogAlertQueryTargetTrackingIdHandler().get())
 
-@app.route('/train/Logex', methods=['POST','GET'])
-def trainModel(): return jsonify(LogExTrainHandler().postOrGet())
+@app.route('/train/LogAlert', methods=['POST','GET'])
+def trainModel(): return jsonify(LogAlertTrainHandler().postOrGet())
 
-@app.route('/save/Logex/model', methods=['POST','GET'])
-def saveModel(): return jsonify(LogExSaveModelHandler().postOrGet())
+@app.route('/save/LogAlert/model', methods=['POST','GET'])
+def saveModel(): return jsonify(LogAlertSaveModelHandler().postOrGet())
 
 if __name__ == "__main__":
     app.run(host=settings['host'], port=settings['port'], debug=settings['debug'])

@@ -10,12 +10,12 @@ w2vModel = manager.dict()
 config = manager.dict()
 
 default = {}
-# LogEx
-default['LogEx_rootPath'] = str(ConfigurationUtil.get('LogEx','rootPath'))
-default['LogEx_unknownDist'] = str(ConfigurationUtil.get('LogEx','unknownDist'))
-default['LogEx_levenshteinWeight'] = str(ConfigurationUtil.get('LogEx','levenshteinWeight'))
-default['LogEx_leastSpaceNumInKeyWord'] = str(ConfigurationUtil.get('LogEx','leastSpaceNumInKeyWord'))
-default['LogEx_leastKeyWordLength'] = str(ConfigurationUtil.get('LogEx','leastKeyWordLength'))
+# LogAlert
+default['LogAlert_rootPath'] = str(ConfigurationUtil.get('LogAlert','rootPath'))
+default['LogAlert_unknownDist'] = str(ConfigurationUtil.get('LogAlert','unknownDist'))
+default['LogAlert_levenshteinWeight'] = str(ConfigurationUtil.get('LogAlert','levenshteinWeight'))
+default['LogAlert_leastSpaceNumInKeyWord'] = str(ConfigurationUtil.get('LogAlert','leastSpaceNumInKeyWord'))
+default['LogAlert_leastKeyWordLength'] = str(ConfigurationUtil.get('LogAlert','leastKeyWordLength'))
 #FeedBack
 default['FeedBack_url'] = str(ConfigurationUtil.get('FeedBack','url'))
 default['FeedBack_sendOrNotSend'] = str(ConfigurationUtil.get('FeedBack','sendOrNotSend'))
@@ -28,11 +28,11 @@ default['es_queryField'] = str(ConfigurationUtil.get('es','queryField'))
 
 config['default'] = default
 
-if str(ConfigurationUtil.get('LogEx','deployMode')) != 'local':
+if str(ConfigurationUtil.get('LogAlert','deployMode')) != 'local':
     RedisUtil().set_single_data('defaultConfig',pickle.dumps(default))
 
 def getConfigByName(configName,type = 'default'):
-    if str(ConfigurationUtil.get('LogEx', 'deployMode')) == 'local':
+    if str(ConfigurationUtil.get('LogAlert', 'deployMode')) == 'local':
         if type in config.keys() and configName in config[type].keys():
             return config[type][configName]
         else:

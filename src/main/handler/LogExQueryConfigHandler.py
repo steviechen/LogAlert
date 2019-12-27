@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from src.main.service.impl.LogExQueryConfigService import LogExQueryConfigService
+from src.main.service.impl.LogAlertQueryConfigService import LogAlertQueryConfigService
 
-class LogExQueryConfigHandler():
+class LogAlertQueryConfigHandler():
     def __init__(self):
         super().__init__()
-        self.logExQueryConfigService = LogExQueryConfigService()
+        self.LogAlertQueryConfigService = LogAlertQueryConfigService()
 
     def get(self):
-        return self.logExQueryConfigService.make_procedure()
+        return self.LogAlertQueryConfigService.make_procedure()

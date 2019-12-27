@@ -41,9 +41,9 @@ currdate = dt.datetime.now().strftime('%F')
 def log(stri):
     now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     print(str(now) + ' ' + str(stri))
+rootPath = '~'
 
-
-rawdata = pd.read_csv('/Users/steviechen1982/PycharmProjects/Logex/rawdata/res.csv')
+rawdata = pd.read_csv(rootPath + '/LogAlert/rawdata/res.csv')
 
 ############################ 定义分词函数 ############################
 def split_word(text, stopwords):
@@ -62,8 +62,8 @@ def split_word(text, stopwords):
 
 ############################ 加载停用词 ############################
 stopwords = {}
-for line in codecs.open('/Users/steviechen1982/PycharmProjects/Logex/rawdata/stop.txt', 'r', 'utf-8'):
-# for line in codecs.open('/Users/steviechen1982/PycharmProjects/Logex/stop.txt'):
+for line in codecs.open(rootPath + '/LogAlert/rawdata/stop.txt', 'r', 'utf-8'):
+# for line in codecs.open(rootPath + '/LogAlert/stop.txt'):
     stopwords[line.rstrip()] = 1
 
 ############################ 分词 ############################
@@ -82,7 +82,7 @@ class Doc_list(object):
             words = words[1:]
             yield SentimentDocument(words,tags)
 
-splited.to_csv('/Users/steviechen1982/PycharmProjects/Logex/input/splited_all.csv', index=None, encoding='utf8')
+splited.to_csv(rootPath + '/LogAlert/input/splited_all.csv', index=None, encoding='utf8')
 
 ############################ tfidf ############################
 # import pickle as p
@@ -95,23 +95,23 @@ splited.to_csv('/Users/steviechen1982/PycharmProjects/Logex/input/splited_all.cs
 # x_tfidf_sp = tfidftransformer.fit_transform(vec_train)
 #
 # # 保存经过fit的vectorizer 与 经过fit的tfidftransformer,预测时使用
-# feature_path = '/Users/steviechen1982/PycharmProjects/Logex/output/model/feature.pkl'
+# feature_path = rootPath + '/LogAlert/output/model/feature.pkl'
 # with open(feature_path, 'wb') as fw:
 #     p.dump(vectorizer.vocabulary_, fw)
 #
-# tfidftransformer_path = '/Users/steviechen1982/PycharmProjects/Logex/output/model/tfidftransformer.pkl'
+# tfidftransformer_path = rootPath + '/LogAlert/output/model/tfidftransformer.pkl'
 # with open(tfidftransformer_path, 'wb') as fw:
 #     p.dump(tfidftransformer, fw)
 #
 #
-# np.save('/Users/steviechen1982/PycharmProjects/Logex/svm_data/x_sp.npy', splited)
-# np.save('/Users/steviechen1982/PycharmProjects/Logex/svm_data/x_tfidf.npy', x_tfidf_sp)
+# np.save(rootPath + '/LogAlert/svm_data/x_sp.npy', splited)
+# np.save(rootPath + '/LogAlert/svm_data/x_tfidf.npy', x_tfidf_sp)
 
 # In[13]:
 
 
 ############################ 准备数据 ############################
-doc_f = codecs.open('/Users/steviechen1982/PycharmProjects/Logex/output/corpus/doc_for_d2v_12w.txt', 'w', encoding='utf8')
+doc_f = codecs.open(rootPath + '/LogAlert/output/corpus/doc_for_d2v_12w.txt', 'w', encoding='utf8')
 for i, contents in enumerate(splited):
     words = []
     for word in contents.split(' '):
@@ -129,19 +129,19 @@ log('Job Done.')
 
 ############################ dbow d2v ############################
 d2v = Doc2Vec(dm=0, size=300, negative=5, hs=0, min_count=3, window=30, sample=1e-5, workers=8, alpha=0.025, min_alpha=0.025)
-doc_list = Doc_list('/Users/steviechen1982/PycharmProjects/Logex/output/corpus/doc_for_d2v_12w.txt')
+doc_list = Doc_list(rootPath + '/LogAlert/output/corpus/doc_for_d2v_12w.txt')
 d2v.build_vocab(doc_list)
 
 # df_lb = y_tr
 
 for i in range(10):
     log('pass: ' + str(i))
-    doc_list = Doc_list('/Users/steviechen1982/PycharmProjects/Logex/output/corpus/doc_for_d2v_12w.txt')
+    doc_list = Doc_list(rootPath + '/LogAlert/output/corpus/doc_for_d2v_12w.txt')
     d2v.train(doc_list, total_examples=d2v.corpus_count, epochs=d2v.iter)
     X_d2v = np.array([d2v.docvecs[i] for i in range(splited.size)])
 #     scores = cross_val_score(LogisticRegression(C=3), X_d2v, df_lb, cv=5)
 #     log('dbow: ' + str(scores) + ' ' + str(np.mean(scores)))
-d2v.save('/Users/steviechen1982/PycharmProjects/Logex/output/model/dbow_d2v_12w.model')
+d2v.save(rootPath + '/LogAlert/output/model/dbow_d2v_12w.model')
 log('Save done!')
 
 
@@ -168,7 +168,7 @@ texts = [[token for token in text if frequency[token] >= 5] for text in texts]
 
 log('Train Model...')
 w2v = Word2Vec(texts, size=300, window=5, iter=15, workers=12)
-w2v.save('/Users/steviechen1982/PycharmProjects/Logex/output/model/w2v_12w.model')
+w2v.save(rootPath + '/LogAlert/output/model/w2v_12w.model')
 log('Save done!')
 
 
@@ -189,7 +189,7 @@ from gensim.models import Word2Vec
 #         frequency[token] += 1
 # texts = [[token for token in text if frequency[token] >= 5] for text in texts]
 
-# model = Word2Vec.load('/Users/steviechen1982/PycharmProjects/Logex/output/model/w2v_12w.model')
+# model = Word2Vec.load(rootPath + '/LogAlert/output/model/w2v_12w.model')
 model = w2v
 
 ############################ w2v ############################
@@ -210,10 +210,10 @@ for line in texts:
 
 df_w2v = pd.DataFrame(w2v_feat)
 df_w2v.columns = ['w2v_' + str(i) for i in df_w2v.columns]
-df_w2v.to_csv('/Users/steviechen1982/PycharmProjects/Logex/output/feature/w2v/w2v_12w.csv', encoding='utf8', index=None)
+df_w2v.to_csv(rootPath + '/LogAlert/output/feature/w2v/w2v_12w.csv', encoding='utf8', index=None)
 df_w2v_avg = pd.DataFrame(w2v_feat_avg)
 df_w2v_avg.columns = ['w2v_avg_' + str(i) for i in df_w2v_avg.columns]
-df_w2v_avg.to_csv('/Users/steviechen1982/PycharmProjects/Logex/output/feature/w2v/w2v_avg_12w.csv', encoding='utf8', index=None)
+df_w2v_avg.to_csv(rootPath + '/LogAlert/output/feature/w2v/w2v_avg_12w.csv', encoding='utf8', index=None)
 
 log('Save w2v and w2v_avg feat done!')
 

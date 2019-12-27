@@ -7,10 +7,10 @@ from src.main.domain.vo.Message import Message
 from src.main.service.TrainingService import TrainingService
 from src.main.utils import ConfigurationUtil
 
-class LogExLoadConfigService(TrainingService):
+class LogAlertLoadConfigService(TrainingService):
     def __init__(self):
         super().__init__()
-        self.deployModel = str(ConfigurationUtil.get('LogEx','deployMode'))
+        self.deployModel = str(ConfigurationUtil.get('LogAlert','deployMode'))
 
     def make_procedure(self,config:dict,subType:str):
         if not config.keys(): return Message('please add config for %s!'%subType).__dict__

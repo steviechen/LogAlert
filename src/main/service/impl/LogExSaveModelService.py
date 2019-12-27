@@ -3,17 +3,17 @@
 import pickle
 from src.main.utils.RedisUtil import RedisUtil
 from src.main.service.TrainingService import TrainingService
-from src.main.utils.LogExProcessUtil import LogExProcessUtil
+from src.main.utils.LogAlertProcessUtil import LogAlertProcessUtil
 from src.main.domain.vo.Message import Message
 from src.main import myGlobal
 from src.main.utils import ConfigurationUtil
 
-class LogExSaveModelService(TrainingService):
+class LogAlertSaveModelService(TrainingService):
     def __init__(self):
         super().__init__()
-        self.logExProcessUtil = LogExProcessUtil()
-        self.deployModel = ConfigurationUtil.get('LogEx', 'deployMode')
-        self.defaultModelDir = myGlobal.getConfigByName('LogEx_rootPath')+'/Logex/output/model'
+        self.LogAlertProcessUtil = LogAlertProcessUtil()
+        self.deployModel = ConfigurationUtil.get('LogAlert', 'deployMode')
+        self.defaultModelDir = myGlobal.getConfigByName('LogAlert_rootPath')+'/LogAlert/output/model'
 
     def make_procedure(self,models):
         msg = ''
@@ -23,12 +23,12 @@ class LogExSaveModelService(TrainingService):
                     msg +=' can not find the d2v model in memory!'
                 else:
                     for modelName in myGlobal.d2vModel.keys():
-                        myGlobal.d2vModel[modelName].save(self.logExProcessUtil.deleteExistFile(self.defaultModelDir+'/%s.model'%(modelName)))
+                        myGlobal.d2vModel[modelName].save(self.LogAlertProcessUtil.deleteExistFile(self.defaultModelDir+'/%s.model'%(modelName)))
                 if len(myGlobal.w2vModel.keys()) == 0 :
                     msg +=' can not find the w2v model in memory!'
                 else:
                     for modelName in myGlobal.w2vModel.keys():
-                        myGlobal.w2vModel[modelName].save(self.logExProcessUtil.deleteExistFile(self.defaultModelDir+'/%s.model'%(modelName)))
+                        myGlobal.w2vModel[modelName].save(self.LogAlertProcessUtil.deleteExistFile(self.defaultModelDir+'/%s.model'%(modelName)))
             else:
                 print(self.getAllModelNamesInRedis())
                 modelNamesInRedis = self.getAllModelNamesInRedis()
@@ -36,7 +36,7 @@ class LogExSaveModelService(TrainingService):
                     msg +=' can not find the model in redis!'
                 else:
                     for modelName in modelNamesInRedis:
-                        pickle.loads(RedisUtil().get_single_data(modelName)).save(self.logExProcessUtil.deleteExistFile(self.defaultModelDir+'/%s.model'%(modelName)))
+                        pickle.loads(RedisUtil().get_single_data(modelName)).save(self.LogAlertProcessUtil.deleteExistFile(self.defaultModelDir+'/%s.model'%(modelName)))
         else:
             for model in models:
                 if (self.deployModel == 'local'):
@@ -48,7 +48,7 @@ class LogExSaveModelService(TrainingService):
                             if model.path!='':
                                 myGlobal.d2vModel[modelName].save(model.path)
                             else:
-                                myGlobal.d2vModel[modelName].save(self.logExProcessUtil.deleteExistFile(self.defaultModelDir + '/%s.model' % (modelName)))
+                                myGlobal.d2vModel[modelName].save(self.LogAlertProcessUtil.deleteExistFile(self.defaultModelDir + '/%s.model' % (modelName)))
 
                     if(model.type=='w2v'):
                         modelName = 'w2v_'+model.component+'&'+model.servertype
@@ -58,7 +58,7 @@ class LogExSaveModelService(TrainingService):
                             if model.path != '':
                                 myGlobal.w2vModel[modelName].save(model.path)
                             else:
-                                myGlobal.w2vModel[modelName].save(self.logExProcessUtil.deleteExistFile(self.defaultModelDir + '/%s.model' % (modelName)))
+                                myGlobal.w2vModel[modelName].save(self.LogAlertProcessUtil.deleteExistFile(self.defaultModelDir + '/%s.model' % (modelName)))
                 else:
                     if (model.type == 'd2v'):
                         modelName = 'd2v_dbow_' + model.component + '&' + model.servertype
@@ -71,7 +71,7 @@ class LogExSaveModelService(TrainingService):
                         if model.path != '':
                             pickle.loads(RedisUtil().get_single_data(modelName)).save(model.path)
                         else:
-                            pickle.loads(RedisUtil().get_single_data(modelName)).save(self.logExProcessUtil.deleteExistFile(self.defaultModelDir + '/%s.model' % (modelName)))
+                            pickle.loads(RedisUtil().get_single_data(modelName)).save(self.LogAlertProcessUtil.deleteExistFile(self.defaultModelDir + '/%s.model' % (modelName)))
 
         if msg == '':
             return Message("save model finished!").__dict__

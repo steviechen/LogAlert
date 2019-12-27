@@ -1,12 +1,12 @@
 from elasticsearch import Elasticsearch
 from src.main import myGlobal
 
-class LogExRawForES:
+class LogAlertRawForES:
     def __init__(self,dc,component):
-        self.logExUrl = "https://%s:%s@clp%s-%s.webex.com/esapi"%(myGlobal.getConfigByName('es_user'),myGlobal.getConfigByName('es_password'),dc,component)
+        self.LogAlertUrl = "https://%s:%s@clp%s-%s.xxx.com/esapi"%(myGlobal.getConfigByName('es_user'),myGlobal.getConfigByName('es_password'),dc,component)
         self.index = "logs-*-%s-*"%(component)
         self.queryDay = myGlobal.getConfigByName('es_queryDay')
-        self.es = Elasticsearch([self.logExUrl], verify_certs=False)
+        self.es = Elasticsearch([self.LogAlertUrl], verify_certs=False)
 
     def getExLogByTrackingId(self,trackingId,serverType,reqinterval='7d'):
         print("The processing trackingId is [%s]"%(trackingId))

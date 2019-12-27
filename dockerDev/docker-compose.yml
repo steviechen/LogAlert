@@ -1,9 +1,9 @@
 redis:
   image: redis
-  container_name: logEx-redis
+  container_name: LogAlert-redis
   restart: always
   ports:
     - 6379:6379
   volumes:
-    - ~/redis_LogEx/data:/data
+    - ~/redis_LogAlert/data:/data
   command: redis-server --appendonly yes --requirepass "redis"

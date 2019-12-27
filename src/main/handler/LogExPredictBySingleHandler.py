@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 from flask import request
-from src.main.service.impl.LogExPredictSingleService import LogExPredictSingleService
-from src.main.domain.vo.LogExTrackingId import LogExTrackingId,Desc
+from src.main.service.impl.LogAlertPredictSingleService import LogAlertPredictSingleService
+from src.main.domain.vo.LogAlertTrackingId import LogAlertTrackingId,Desc
 
-class LogExPredictBySingleHandler():
+class LogAlertPredictBySingleHandler():
     def __init__(self):
         super().__init__()
-        self.logExPredictSingleService = LogExPredictSingleService()
+        self.LogAlertPredictSingleService = LogAlertPredictSingleService()
 
     def post(self):
         body = request.get_json()
-        trackingId = LogExTrackingId(body['name'],'',Desc(body['desc']['component'],body['desc']['servertype'],body['desc']['dc']))
-        return self.logExPredictSingleService.make_procedure(trackingId)
+        trackingId = LogAlertTrackingId(body['name'],'',Desc(body['desc']['component'],body['desc']['servertype'],body['desc']['dc']))
+        return self.LogAlertPredictSingleService.make_procedure(trackingId)
 
