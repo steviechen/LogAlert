@@ -59,7 +59,7 @@ prophet==0.1.1
 protobuf==3.8.0
 ptyprocess==0.6.0
 py==1.8.0
-Pygments==2.3.1
+Pygments==2.7.4
 pyparsing==2.3.1
 pystan==2.18.0
 pytest==4.3.1
