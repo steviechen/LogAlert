@@ -34,7 +34,7 @@ holidays==0.9.9
 idna==2.8
 ipykernel==5.1.0
 ipython-genutils==0.2.0
-ipython==7.2.0
+ipython==7.16.3
 jedi==0.13.2
 jmespath==0.9.3
 jieba==0.39
